@@ -157,11 +157,16 @@ public:
     Robot(Point position) {
         this->position = position;
     }
-    Point getPosition() {
+    Point get_position() {
         return position;
     }
     void move(Point newPosition) {
         this->position = newPosition;
+    }
+
+    // move to position (x, y) and draw the squares in the way
+    void move_and_draw(Point newPosition) {
+        // TODO: implement
     }
 };
 
