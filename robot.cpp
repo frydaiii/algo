@@ -66,8 +66,8 @@ public:
     }
     
     /*
-        To find orientation of ordered triplet (p, q, r).
-        The function returns following values
+        to find orientation of ordered triplet (p, q, r)
+        the function returns following values
         0 --> p, q and r are collinear
         1 --> Clockwise
         2 --> Counterclockwise
@@ -155,12 +155,9 @@ public:
         return Point(x, y);
     }
 
-    /*
-        find the unit square that contains the segment. If possible, return top left Point of that square.
-        If not return error.
-    */
+    // return the top left point of the square contain line segment.
     Point unit_square_contain() {
-        return Point(std::min(std::floor(p1.x()), std::floor(p2.x())), std::max(std::ceil(p1.y()), std::ceil(p2.y()))); // return top left point
+        return Point(std::min(std::floor(p1.x()), std::floor(p2.x())), std::max(std::ceil(p1.y()), std::ceil(p2.y()))); 
     }
 };
 
@@ -171,7 +168,7 @@ private:
     std::vector<std::vector<int>> board; // board (x, y) is a square with top left point is (-y, x)
 public:
     Board() : robot(Point(0.5, 0.5)), dimension(0), board(dimension, std::vector<int>(dimension, 0)) {}
-    Board(int n) : robot(Point(0.5, 0.5)), dimension(n), board(dimension, std::vector<int>(dimension)) {}
+    Board(int n) : robot(Point(0.5, 0.5)), dimension(n), board(dimension, std::vector<int>(dimension, 0)) {}
 
     // integer coordinate to index of board
     std::pair<int, int> coordinate_to_index(Point p) {
@@ -190,8 +187,11 @@ public:
     }
 
     void move_robot_and_draw(int _i, int _j) {
-        Point p = index_to_coordinate(std::make_pair(_i, _j)), dest_square_center(p.x() + 0.5, p.y() - 0.5);
+        Point p = index_to_coordinate(std::make_pair(_i, _j));
+        Point dest_square_center(p.x() + 0.5, p.y() - 0.5);
         LineSegment line(robot, dest_square_center);
+
+        // inittialize unit lines
         std::vector<LineSegment> unit_lines;
         for (int i = 0; i < this->dimension; i++) {
             LineSegment v(Point(i, 0), Point(i, -this->dimension)), h(Point(0, -i), Point(this->dimension, -i));
@@ -200,7 +200,7 @@ public:
         }
 
         // cut the line into segments
-        std::vector<Point> intersections;
+        std::vector<Point> intersections; // include origin and destination position of robot
         intersections.push_back(this->robot);
         for (LineSegment l : unit_lines) {
             if (line.do_intersect(l)) {
