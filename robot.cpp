@@ -138,6 +138,19 @@ public:
         double y = (a1*c2 - a2*c1)/determinant;
         return Point(x, y);
     }
+
+    /*
+        find the unit square that contains the segment. If possible, return top left Point of that square.
+        If not return error.
+    */
+    Point square_contain() {
+        if (std::ceil(this->p1.x()) != std::ceil(this->p2.x()) || std::ceil(this->p1.y()) != std::ceil(this->p2.y()) ||
+            std::floor(this->p1.x()) != std::floor(this->p2.x()) || std::floor(this->p1.y()) != std::floor(this->p2.y())) {
+            // TODO handler exception
+            return Point(-9999, -9999);
+        }
+        return Point(std::floor(this->p1.x()), std::ceil(this->p1.y())); // return top left point
+    }
 };
 
 // class Robot {
@@ -167,17 +180,21 @@ class Board {
 private:
     Point robot;
     int dimension;
-    std::vector<std::vector<int>> board;
+    std::vector<std::vector<int>> board; // board (x, y) is a square with top left point is (-y, x)
 public:
-    Board() : robot(Point(0, 0)), dimension(0), board(dimension, std::vector<int>(dimension)) {}
+    Board() : robot(Point(0, 0)), dimension(0), board(dimension, std::vector<int>(dimension, 0)) {}
     Board(int n) : robot(Point(0, 0)), dimension(n), board(dimension, std::vector<int>(dimension)) {}
+
+    std::pair<int, int> square_coordinate_to_index(Point topleft) {
+        return std::make_pair(-topleft.y(), topleft.x());
+    }
 
     void move_robot(double x, double y) {
         this->robot.new_pos(x, y);
     }
 
     void move_robot_and_draw(double x, double y) {
-        std::vector<std::vector<int>> board(this->dimension, std::vector<int>(this->dimension, 0));
+        // TODO implement
     }
 };  
 
