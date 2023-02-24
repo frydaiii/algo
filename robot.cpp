@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <vector>
 
 /*
     0----------------------------> x
@@ -24,21 +25,19 @@
 
 class Point {
 private:
-    double _x, _y; // immutable
+    double _x, _y; 
 public:
-    Point() {
-        this->_x = 0;
-        this->_y = 0;
-    }
-    Point(double x, double y) {
-        this->_x = x;
-        this->_y = y;
-    }
+    Point() : _x(0), _y(0) {}
+    Point(double x, double y) : _x(x), _y(y) {}
     double x() {
         return _x;
     }
     double y() {
         return _y;
+    }
+    void new_pos(double x, double y) {
+        this->_x = x;
+        this->_y = y;
     }
 };
 
@@ -46,14 +45,8 @@ class LineSegment {
 private:
     Point p1, p2;
 public:
-    LineSegment() {
-        this->p1 = Point(0, 0);
-        this->p2 = Point(0, 0);
-    }
-    LineSegment(Point p1, Point p2) {
-        this->p1 = p1;
-        this->p2 = p2;
-    }
+    LineSegment() : p1(Point(0,0)), p2(Point(0,0)) {}
+    LineSegment(Point _p1, Point _p2) : p1(_p1), p2(_p2) {}
 
     Point get_p1() {
         return p1;
@@ -147,33 +140,51 @@ public:
     }
 };
 
-class Robot {
+// class Robot {
+// private:
+//     Point position;
+// public:
+//     Robot() {
+//         this->position = Point(0, 0);
+//     }
+//     Robot(Point position) {
+//         this->position = position;
+//     }
+//     Point get_position() {
+//         return position;
+//     }
+//     void move(Point newPosition) {
+//         this->position = newPosition;
+//     }
+
+//     // move to position (x, y) and draw the squares in the way
+//     void move_and_draw(Point newPosition) {
+//         // TODO: implement
+//     }
+// };
+
+class Board {
 private:
-    Point position;
+    Point robot;
+    int dimension;
+    std::vector<std::vector<int>> board;
 public:
-    Robot() {
-        this->position = Point(0, 0);
-    }
-    Robot(Point position) {
-        this->position = position;
-    }
-    Point get_position() {
-        return position;
-    }
-    void move(Point newPosition) {
-        this->position = newPosition;
+    Board() : robot(Point(0, 0)), dimension(0), board(dimension, std::vector<int>(dimension)) {}
+    Board(int n) : robot(Point(0, 0)), dimension(n), board(dimension, std::vector<int>(dimension)) {}
+
+    void move_robot(double x, double y) {
+        this->robot.new_pos(x, y);
     }
 
-    // move to position (x, y) and draw the squares in the way
-    void move_and_draw(Point newPosition) {
-        // TODO: implement
+    void move_robot_and_draw(double x, double y) {
+        std::vector<std::vector<int>> board(this->dimension, std::vector<int>(this->dimension, 0));
     }
-};
+};  
 
 int main() {
     // determine 2 line segments
-    LineSegment ls1 = LineSegment(Point(0, 1), Point(0, -2));
-    LineSegment ls2 = LineSegment(Point(-2, 0), Point(1, 0));
+    LineSegment ls1(Point(0, 1), Point(0, -2));
+    LineSegment ls2(Point(-2, 0), Point(1, 0));
     Point intersection = ls1.get_intersection(ls2);
     std::cout << intersection.x() << " " << intersection.y() << std::endl;
 }
