@@ -223,9 +223,14 @@ public:
     }
 
     void print_board() {
+        std::pair<int, int> robot_index = this->coordinate_to_index(this->robot);
         for (int i = 0; i < this->dimension; i++) {
             for (int j = 0; j < this->dimension; j++) {
-                std::cout << this->board[i][j] << " ";
+                if (robot_index.first == i && robot_index.second == j) {
+                    std::cout << "R ";
+                } else {
+                    std::cout << this->board[i][j] << " ";
+                }
             }
             std::cout << std::endl;
         }
