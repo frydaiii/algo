@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <algorithm>
 
 /*
     0----------------------------> x
@@ -38,6 +39,17 @@ public:
     void new_pos(double x, double y) {
         this->_x = x;
         this->_y = y;
+    }
+
+    // this function used for sorting points in a vector
+    static bool compare(Point p1, Point p2) {
+        if (p1.x() < p2.x()) {
+            return true;
+        } else if (p1.x() == p2.x()) {
+            return p1.y() < p2.y();
+        } else {
+            return false;
+        }
     }
 };
 
@@ -143,38 +155,10 @@ public:
         find the unit square that contains the segment. If possible, return top left Point of that square.
         If not return error.
     */
-    Point square_contain() {
-        if (std::ceil(this->p1.x()) != std::ceil(this->p2.x()) || std::ceil(this->p1.y()) != std::ceil(this->p2.y()) ||
-            std::floor(this->p1.x()) != std::floor(this->p2.x()) || std::floor(this->p1.y()) != std::floor(this->p2.y())) {
-            // TODO handler exception
-            return Point(-9999, -9999);
-        }
-        return Point(std::floor(this->p1.x()), std::ceil(this->p1.y())); // return top left point
+    Point unit_square_contain() {
+        return Point(std::min(std::floor(p1.x()), std::floor(p2.x())), std::max(std::ceil(p1.y()), std::ceil(p2.y()))); // return top left point
     }
 };
-
-// class Robot {
-// private:
-//     Point position;
-// public:
-//     Robot() {
-//         this->position = Point(0, 0);
-//     }
-//     Robot(Point position) {
-//         this->position = position;
-//     }
-//     Point get_position() {
-//         return position;
-//     }
-//     void move(Point newPosition) {
-//         this->position = newPosition;
-//     }
-
-//     // move to position (x, y) and draw the squares in the way
-//     void move_and_draw(Point newPosition) {
-//         // TODO: implement
-//     }
-// };
 
 class Board {
 private:
@@ -182,26 +166,73 @@ private:
     int dimension;
     std::vector<std::vector<int>> board; // board (x, y) is a square with top left point is (-y, x)
 public:
-    Board() : robot(Point(0, 0)), dimension(0), board(dimension, std::vector<int>(dimension, 0)) {}
-    Board(int n) : robot(Point(0, 0)), dimension(n), board(dimension, std::vector<int>(dimension)) {}
+    Board() : robot(Point(0.5, 0.5)), dimension(0), board(dimension, std::vector<int>(dimension, 0)) {}
+    Board(int n) : robot(Point(0.5, 0.5)), dimension(n), board(dimension, std::vector<int>(dimension)) {}
 
-    std::pair<int, int> square_coordinate_to_index(Point topleft) {
-        return std::make_pair(-topleft.y(), topleft.x());
+    // integer coordinate to index of board
+    std::pair<int, int> coordinate_to_index(Point p) {
+        // TODO handle exception
+        return std::make_pair(-p.y(), p.x());
     }
 
-    void move_robot(double x, double y) {
-        this->robot.new_pos(x, y);
+    // index of board to integer coordinate
+    Point index_to_coordinate(std::pair<int, int> index) {
+        return Point(index.second, -index.first);
     }
 
-    void move_robot_and_draw(double x, double y) {
-        // TODO implement
+    void move_robot(int i, int j) {
+        Point p = index_to_coordinate(std::make_pair(i, j));
+        this->robot.new_pos(p.x() + 0.5, p.y() - 0.5);
+    }
+
+    void move_robot_and_draw(int _i, int _j) {
+        Point p = index_to_coordinate(std::make_pair(_i, _j)), dest_square_center(p.x() + 0.5, p.y() - 0.5);
+        LineSegment line(robot, dest_square_center);
+        std::vector<LineSegment> unit_lines;
+        for (int i = 0; i < this->dimension; i++) {
+            LineSegment v(Point(i, 0), Point(i, this->dimension)), h(Point(0, -i), Point(this->dimension, -i));
+            unit_lines.push_back(v);
+            unit_lines.push_back(h);
+        }
+
+        // cut the line into segments
+        std::vector<Point> intersections;
+        intersections.push_back(this->robot);
+        for (LineSegment l : unit_lines) {
+            if (line.do_intersect(l)) {
+                intersections.push_back(line.get_intersection(l));
+            }
+        }
+        move_robot(_i, _j);
+        intersections.push_back(this->robot);
+
+        // sort the intersections
+        std::sort(intersections.begin(), intersections.end(), Point::compare);
+
+        // iterate through the intersections and draw
+        for (std::vector<Point>::iterator it = intersections.begin() + 1; it != intersections.end(); it++) {
+            Point p1 = *(it - 1), p2 = *it;
+            LineSegment l(p1, p2);
+            Point square = l.unit_square_contain();
+            std::pair<int, int> index = coordinate_to_index(square);
+            this->board[index.first][index.second] = 1;
+        }
+    }
+
+    void print_board() {
+        for (int i = 0; i < this->dimension; i++) {
+            for (int j = 0; j < this->dimension; j++) {
+                std::cout << this->board[i][j] << " ";
+            }
+            std::cout << std::endl;
+        }
     }
 };  
 
 int main() {
-    // determine 2 line segments
-    LineSegment ls1(Point(0, 1), Point(0, -2));
-    LineSegment ls2(Point(-2, 0), Point(1, 0));
-    Point intersection = ls1.get_intersection(ls2);
-    std::cout << intersection.x() << " " << intersection.y() << std::endl;
+    Board board(5);
+    board.move_robot(1, 1);
+    board.move_robot_and_draw(3, 3);
+    board.move_robot_and_draw(2, 3);
+    board.print_board();
 }
