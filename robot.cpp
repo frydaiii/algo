@@ -134,8 +134,8 @@ public:
 
     Point get_intersection(LineSegment other) {
         if (!do_intersect(other)) {
-            // TODO: throw exception
-            return Point(-99999, -99999);
+            // error
+            return Point(MAXFLOAT, MAXFLOAT);
         }
 
         // first represented as a1x + b1y = c1
@@ -172,8 +172,7 @@ public:
 
     // integer coordinate to index of board
     std::pair<int, int> coordinate_to_index(Point p) {
-        // TODO handle exception
-        return std::make_pair(-p.y(), p.x());
+        return std::make_pair(-trunc(p.y()), trunc(p.x()));
     }
 
     // index of board to integer coordinate
