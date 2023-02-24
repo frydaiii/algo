@@ -190,7 +190,7 @@ public:
         LineSegment line(robot, dest_square_center);
         std::vector<LineSegment> unit_lines;
         for (int i = 0; i < this->dimension; i++) {
-            LineSegment v(Point(i, 0), Point(i, this->dimension)), h(Point(0, -i), Point(this->dimension, -i));
+            LineSegment v(Point(i, 0), Point(i, -this->dimension)), h(Point(0, -i), Point(this->dimension, -i));
             unit_lines.push_back(v);
             unit_lines.push_back(h);
         }
@@ -230,9 +230,25 @@ public:
 };  
 
 int main() {
-    Board board(5);
-    board.move_robot(1, 1);
+    Board board(6);
+    board.move_robot(3, 1);
+    std::cout << "move and draw to 3 3" << std::endl;
     board.move_robot_and_draw(3, 3);
-    board.move_robot_and_draw(2, 3);
+    board.print_board();
+
+    std::cout << "move and draw to 0 5" << std::endl;
+    board.move_robot_and_draw(0, 5);
+    board.print_board();
+
+    std::cout << "move and draw to 5 5" << std::endl;
+    board.move_robot_and_draw(5, 5);
+    board.print_board();
+
+    std::cout << "move and draw to 0 0" << std::endl;
+    board.move_robot_and_draw(0, 0);
+    board.print_board();
+
+    std::cout << "move and draw to 3 1" << std::endl;
+    board.move_robot_and_draw(3, 1);
     board.print_board();
 }
