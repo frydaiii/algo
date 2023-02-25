@@ -275,13 +275,13 @@ int main() {
         value = tokens[1];
 
         if (command == DIMENSION) {
-            if (std::stoi(value) <= 0) {
-                std::cout << "Invalid dimension" << std::endl;
-                return 0;
-            }
             if (board.get_dimension() > 0) {
                 std::cout << "Dimension already set" << std::endl;
                 continue;
+            }
+            if (std::stoi(value) <= 0) {
+                std::cout << "Invalid dimension" << std::endl;
+                return 0;
             }
             board.set_dimension(std::stoi(value));
         } else if (command == MOVE_TO || command == LINE_TO) {
