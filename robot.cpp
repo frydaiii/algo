@@ -22,7 +22,7 @@
     y
 
     The board is represented in decart coordinates.
-    Each square is 1x1. Square (x,y) has 4 points (x,y), (x+1,y), (x,y-1), (x+1,y-1) and center (x-0.5,y-0.5).
+    Each square is 1x1. Square (x,y) has 4 points (x,y), (x+1,y), (x,y-1), (x+1,y-1) and center (x+0.5,y-0.5).
     The origin position of the robot is in the square (0, 0).
 */
 
