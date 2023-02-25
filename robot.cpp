@@ -2,6 +2,8 @@
 #include <cmath>
 #include <vector>
 #include <algorithm>
+#include <string>
+#include <sstream>
 
 /*
     0----------------------------> x
@@ -167,8 +169,20 @@ private:
     int dimension;
     std::vector<std::vector<int>> board; // board (x, y) is a square with top left point is (-y, x)
 public:
-    Board() : robot(Point(0.5, 0.5)), dimension(0), board(dimension, std::vector<int>(dimension, 0)) {}
-    Board(int n) : robot(Point(0.5, 0.5)), dimension(n), board(dimension, std::vector<int>(dimension, 0)) {}
+    Board() : robot(Point(0.5, -0.5)), dimension(0), board(dimension, std::vector<int>(dimension, 0)) {}
+    Board(int n) : robot(Point(0.5, -0.5)), dimension(n), board(dimension, std::vector<int>(dimension, 0)) {}
+
+    int get_dimension() {
+        return this->dimension;
+    }
+
+    void set_dimension(int n) {
+        this->dimension = n;
+        this->board.resize(n);
+        for (int i = 0; i < n; i++) {
+            this->board[i].resize(n);
+        }
+    }
 
     // integer coordinate to index of board
     std::pair<int, int> coordinate_to_index(Point p) {
@@ -237,26 +251,62 @@ public:
     }
 };  
 
+#define DIMENSION "DIMENSION"
+#define MOVE_TO "MOVE_TO"
+#define LINE_TO "LINE_TO"
+
 int main() {
-    Board board(6);
-    board.move_robot(3, 1);
-    std::cout << "move and draw to 3 3" << std::endl;
-    board.move_robot_and_draw(3, 3);
-    board.print_board();
+    std::string command, value, s;
+    Board board;
+    while (std::getline(std::cin, s)) {
+        if (s.empty()) {
+            break;
+        }
+        std::stringstream ss(s);
+        ss >> command >> value;
 
-    std::cout << "move and draw to 0 5" << std::endl;
-    board.move_robot_and_draw(0, 5);
-    board.print_board();
+        if (command == DIMENSION) {
+            if (std::stoi(value) <= 0) {
+                std::cout << "Invalid dimension" << std::endl;
+                return 0;
+            }
+            if (board.get_dimension() > 0) {
+                std::cout << "Dimension already set" << std::endl;
+                continue;
+            }
+            board.set_dimension(std::stoi(value));
+        } else if (command == MOVE_TO || command == LINE_TO) {
+            if (board.get_dimension() <= 0) {
+                std::cout << "Dimension not set" << std::endl;
+                continue;
+            }
 
-    std::cout << "move and draw to 5 5" << std::endl;
-    board.move_robot_and_draw(5, 5);
-    board.print_board();
+            // get coordinates
+            std::stringstream ss(value);
+            std::string segment;
+            std::vector<int> coordinates;
+            while (getline(ss, segment, ',')) {
+                coordinates.push_back(std::stoi(segment));
+            }
+            if (coordinates.size() != 2) {
+                std::cout << "Invalid coordinate" << std::endl;
+                continue;
+            }
+            if (coordinates[0] < 0 || coordinates[0] >= board.get_dimension() || coordinates[1] < 0 || coordinates[1] >= board.get_dimension()) {
+                std::cout << "Invalid coordinate" << std::endl;
+                continue;
+            }
 
-    std::cout << "move and draw to 0 0" << std::endl;
-    board.move_robot_and_draw(0, 0);
-    board.print_board();
-
-    std::cout << "move and draw to 3 1" << std::endl;
-    board.move_robot_and_draw(3, 1);
-    board.print_board();
+            // process
+            if (command == MOVE_TO) {
+                board.move_robot(coordinates[0], coordinates[1]);
+            } else if (command == LINE_TO) {
+                board.move_robot_and_draw(coordinates[0], coordinates[1]);
+            }
+            board.print_board();
+        } else {
+            std::cout << "Invalid command" << std::endl;
+            continue;
+        }
+    }
 }
