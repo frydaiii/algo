@@ -5,6 +5,10 @@
 #include <string>
 #include <sstream>
 
+#define DIMENSION "DIMENSION"
+#define MOVE_TO "MOVE_TO"
+#define LINE_TO "LINE_TO"
+
 /*
     0----------------------------> x
     | R|  |  |  |  |  |  |  |
@@ -250,10 +254,6 @@ public:
         }
     }
 };  
-
-#define DIMENSION "DIMENSION"
-#define MOVE_TO "MOVE_TO"
-#define LINE_TO "LINE_TO"
 
 int main() {
     std::string command, value, s;
