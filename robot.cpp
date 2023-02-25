@@ -263,7 +263,16 @@ int main() {
             break;
         }
         std::stringstream ss(s);
-        ss >> command >> value;
+        std::vector<std::string> tokens;
+        while (ss >> s) {
+            tokens.push_back(s);
+        }
+        if (tokens.size() != 2) {
+            std::cout << "Invalid command" << std::endl;
+            continue;
+        }
+        command = tokens[0];
+        value = tokens[1];
 
         if (command == DIMENSION) {
             if (std::stoi(value) <= 0) {
