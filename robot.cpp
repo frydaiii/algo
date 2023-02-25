@@ -167,7 +167,7 @@ class Board {
 private:
     Point robot;
     int dimension;
-    std::vector<std::vector<int>> board; // board (x, y) is a square with top left point is (-y, x)
+    std::vector<std::vector<int>> board; // board[i][j] is a square with top left point is (-j, i)
 public:
     Board() : robot(Point(0.5, -0.5)), dimension(0), board(dimension, std::vector<int>(dimension, 0)) {}
     Board(int n) : robot(Point(0.5, -0.5)), dimension(n), board(dimension, std::vector<int>(dimension, 0)) {}
